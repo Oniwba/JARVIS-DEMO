@@ -1,6 +1,7 @@
+
 import os
+import requests
 import streamlit as st
-from groq import Groq
 
 # ==========================================
 # CONFIGURAÇÕES
@@ -15,19 +16,25 @@ st.set_page_config(
 
 MODELO_PADRAO = "openai/gpt-oss-120b"
 
+URL_GROQ = "https://api.groq.com/openai/v1/chat/completions"
+
 INSTRUCOES = """
 Você é JARVIS, um assistente virtual inteligente,
 inspirado em assistentes futuristas.
 
-Sua personalidade:
+PERSONALIDADE:
 - Inteligente, educado e objetivo.
 - Fale sempre em português brasileiro.
-- Seja prestativo e converse naturalmente.
-- Explique assuntos de maneira clara.
+- Converse naturalmente.
+- Seja prestativo e explique claramente.
 - Use humor leve quando apropriado.
 - Não invente informações.
-- Você é uma demonstração virtual e não controla
-  o computador do usuário.
+- Chame-se sempre JARVIS.
+
+LIMITAÇÕES:
+Você é uma demonstração virtual.
+Não controla o computador do usuário.
+Não executa comandos reais no sistema.
 """
 
 # ==========================================
@@ -42,7 +49,7 @@ st.markdown("""
         radial-gradient(
             circle at 50% 0%,
             #102b49 0%,
-            #071321 40%,
+            #071321 45%,
             #030811 100%
         );
     color: #e5f4ff;
@@ -102,10 +109,12 @@ footer {
             #0876c9 40%,
             #03152c 72%
         );
+
     box-shadow:
         0 0 20px #00aaff,
         0 0 45px #0077ff,
         0 0 85px #0044aa;
+
     animation: pulse 3s infinite ease-in-out;
 }
 
@@ -117,6 +126,7 @@ footer {
             0 0 45px #0077ff,
             0 0 85px #0044aa;
     }
+
     50% {
         transform: scale(1.08);
         box-shadow:
@@ -189,7 +199,7 @@ st.markdown(
 )
 
 # ==========================================
-# CONFIGURAÇÃO DA API
+# CONFIGURAÇÃO DA API GROQ
 # ==========================================
 
 def obter_configuracao():
@@ -219,16 +229,64 @@ def obter_configuracao():
     return chave, modelo
 
 
-def criar_cliente():
+# ==========================================
+# FUNÇÃO DE CONVERSAÇÃO
+# ==========================================
+
+def conversar(historico):
 
     chave, modelo = obter_configuracao()
 
     if not chave:
-        return None, modelo
+        raise ValueError(
+            "A chave GROQ_API_KEY não foi configurada "
+            "no Streamlit Secrets."
+        )
 
-    cliente = Groq(api_key=chave)
+    mensagens = [
+        {
+            "role": "system",
+            "content": INSTRUCOES
+        }
+    ]
 
-    return cliente, modelo
+    mensagens.extend(historico)
+
+    resposta = requests.post(
+        URL_GROQ,
+        headers={
+            "Authorization": f"Bearer {chave}",
+            "Content-Type": "application/json"
+        },
+        json={
+            "model": modelo,
+            "messages": mensagens,
+            "temperature": 0.7,
+            "max_completion_tokens": 2048
+        },
+        timeout=60
+    )
+
+    if not resposta.ok:
+
+        try:
+            detalhes = resposta.json().get(
+                "error", {}
+            ).get(
+                "message",
+                resposta.text
+            )
+        except Exception:
+            detalhes = resposta.text
+
+        raise RuntimeError(
+            f"Erro da API Groq ({resposta.status_code}): "
+            f"{detalhes}"
+        )
+
+    dados = resposta.json()
+
+    return dados["choices"][0]["message"]["content"]
 
 
 # ==========================================
@@ -238,11 +296,6 @@ def criar_cliente():
 if "mensagens" not in st.session_state:
     st.session_state.mensagens = []
 
-if "cliente" not in st.session_state:
-    st.session_state.cliente = None
-
-if "modelo" not in st.session_state:
-    st.session_state.modelo = None
 
 # ==========================================
 # BARRA LATERAL
@@ -252,11 +305,16 @@ with st.sidebar:
 
     st.markdown("## ⚙️ Configurações")
 
-    st.write("**JARVIS DEMO 1.2**")
+    st.write("**JARVIS DEMO 1.3**")
 
-    st.caption("Assistente virtual conectado à IA Groq.")
+    st.caption(
+        "Assistente virtual conectado à inteligência artificial Groq."
+    )
 
-    if st.button("🗑️ Limpar conversa", use_container_width=True):
+    if st.button(
+        "🗑️ Limpar conversa",
+        use_container_width=True
+    ):
         st.session_state.mensagens = []
         st.rerun()
 
@@ -269,9 +327,10 @@ with st.sidebar:
     st.write("Interface: Streamlit")
 
     st.caption(
-        "Esta é uma demonstração. "
-        "O JARVIS não executa comandos reais no computador."
+        "Demonstração virtual. "
+        "Não executa comandos reais no computador."
     )
+
 
 # ==========================================
 # MENSAGEM INICIAL
@@ -284,6 +343,7 @@ if not st.session_state.mensagens:
         "Olá! Como posso ajudar você hoje?"
     )
 
+
 # ==========================================
 # EXIBIR HISTÓRICO
 # ==========================================
@@ -293,6 +353,7 @@ for mensagem in st.session_state.mensagens:
     with st.chat_message(mensagem["role"]):
 
         st.markdown(mensagem["content"])
+
 
 # ==========================================
 # ENTRADA DO USUÁRIO
@@ -304,7 +365,6 @@ pergunta = st.chat_input(
 
 if pergunta:
 
-    # Exibe e salva a mensagem do usuário
     st.session_state.mensagens.append({
         "role": "user",
         "content": pergunta
@@ -313,81 +373,62 @@ if pergunta:
     with st.chat_message("user"):
         st.markdown(pergunta)
 
-    # ======================================
-    # CONECTAR À GROQ
-    # ======================================
+    with st.chat_message("assistant"):
 
-    try:
+        with st.spinner("JARVIS está processando..."):
 
-        cliente, modelo = criar_cliente()
+            try:
 
-        if cliente is None:
-
-            resposta = (
-                "Minha conexão com a inteligência artificial "
-                "não foi configurada. Verifique a variável "
-                "GROQ_API_KEY em Settings → Secrets no "
-                "Streamlit Cloud."
-            )
-
-        else:
-
-            with st.chat_message("assistant"):
-
-                with st.spinner("JARVIS está processando..."):
-
-                    historico = [
-                        {
-                            "role": "system",
-                            "content": INSTRUCOES
-                        }
-                    ]
-
-                    # O histórico já contém a pergunta atual.
-                    # Não adicionar a pergunta novamente.
-                    historico.extend(
-                        st.session_state.mensagens
-                    )
-
-                    resultado = cliente.chat.completions.create(
-                        model=modelo,
-                        messages=historico,
-                        temperature=0.7,
-                        max_completion_tokens=2048
-                    )
-
-                    resposta = (
-                        resultado.choices[0].message.content
-                        or "Não consegui gerar uma resposta."
-                    )
+                resposta = conversar(
+                    st.session_state.mensagens
+                )
 
                 st.markdown(resposta)
 
-        # Salva a resposta
-        st.session_state.mensagens.append({
-            "role": "assistant",
-            "content": resposta
-        })
+                st.session_state.mensagens.append({
+                    "role": "assistant",
+                    "content": resposta
+                })
 
-        if cliente is None:
-            with st.chat_message("assistant"):
-                st.warning(resposta)
+            except requests.exceptions.Timeout:
 
-    except Exception as erro:
+                resposta = (
+                    "A conexão demorou demais. "
+                    "Tente novamente."
+                )
 
-        mensagem_erro = (
-            "Não consegui me conectar à inteligência artificial. "
-            "Verifique a configuração da API e o modelo selecionado. "
-            "Detalhes técnicos: " + str(erro)
-        )
+                st.error(resposta)
 
-        with st.chat_message("assistant"):
-            st.error(mensagem_erro)
+                st.session_state.mensagens.append({
+                    "role": "assistant",
+                    "content": resposta
+                })
 
-        st.session_state.mensagens.append({
-            "role": "assistant",
-            "content": mensagem_erro
-        })
+            except requests.exceptions.RequestException:
+
+                resposta = (
+                    "Não consegui estabelecer conexão "
+                    "com a API da Groq. Verifique sua internet."
+                )
+
+                st.error(resposta)
+
+                st.session_state.mensagens.append({
+                    "role": "assistant",
+                    "content": resposta
+                })
+
+            except Exception as erro:
+
+                resposta = f"Falha na comunicação: {erro}"
+
+                st.error(resposta)
+
+                st.session_state.mensagens.append({
+                    "role": "assistant",
+                    "content": resposta
+                })
+
 
 # ==========================================
 # RODAPÉ
@@ -403,7 +444,7 @@ st.markdown(
         font-size:11px;
         letter-spacing:3px;
     ">
-        JARVIS PERSONAL AI SYSTEM • DEMO VERSION 1.2
+        JARVIS PERSONAL AI SYSTEM • DEMO VERSION 1.3
     </div>
     """,
     unsafe_allow_html=True
