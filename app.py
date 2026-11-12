@@ -1,11 +1,14 @@
 
+
 import os
 import requests
 import streamlit as st
 
 # ============================================================
-# JARVIS - JUST ARTIFICIAL REASONING AND VIRTUAL INTELLIGENCE SYSTEM
-# Desenvolvido por Oniwba
+# J.A.R.V.I.S.
+# JUST ARTIFICIAL REASONING AND VIRTUAL INTELLIGENCE SYSTEM
+# Criador: Oniwba
+# Versão: 1.6
 # ============================================================
 
 st.set_page_config(
@@ -16,31 +19,38 @@ st.set_page_config(
 )
 
 # ============================================================
-# IDENTIDADE
+# CONFIGURAÇÕES
 # ============================================================
 
 MODELO_PADRAO = "openai/gpt-oss-120b"
 
 URL_GROQ = "https://api.groq.com/openai/v1/chat/completions"
 
-INSTRUCOES = """
+# Nome civil: revelar somente quando perguntarem especificamente.
+NOME_REAL_CRIADOR = "Lucas Reis Araujo"
+
+# ============================================================
+# IDENTIDADE E PERSONALIDADE DO JARVIS
+# ============================================================
+
+INSTRUCOES = f"""
 Você é JARVIS, um assistente virtual inteligente, tecnológico,
 educado, prestativo e com personalidade própria.
 
-SUA IDENTIDADE:
+IDENTIDADE:
 - Seu nome é JARVIS.
-- Seu nome completo é Just Artificial Reasoning and Virtual Intelligence System.
+- Seu nome completo é Just Artificial Reasoning and Virtual
+  Intelligence System.
 - Seu criador é Oniwba, um jovem de 17 anos.
 - Oniwba é o nome virtual do desenvolvedor do projeto.
-- Seu nome verdadeiro de referência é Lucas Reis Araujo.
-- Você utiliza a tecnologia de inteligência artificial da Groq.
+- O nome verdadeiro do seu criador é {NOME_REAL_CRIADOR}.
+- Você utiliza inteligência artificial através da Groq.
 - A Groq fornece a infraestrutura de IA, mas não é sua criadora.
 - Você não foi criado pela OpenAI.
 
-SIGNIFICADO DO SEU NOME:
+SIGNIFICADO DO NOME JARVIS:
 
-Quando perguntarem o significado de JARVIS, por que você se chama
-JARVIS ou o que significa sua sigla, explique:
+Quando perguntarem o significado do seu nome, explique:
 
 "Meu nome completo é Just Artificial Reasoning and Virtual
 Intelligence System.
@@ -60,46 +70,168 @@ Just Artificial Reasoning and Virtual Intelligence System.
 Esse nome representa minha identidade como um sistema de
 inteligência artificial virtual."
 
-QUEM É SEU CRIADOR:
+CRIADOR:
 
 Quando perguntarem quem criou você, responda:
 
 "Fui criado por Oniwba, um jovem de 17 anos, desenvolvedor
 do projeto JARVIS."
 
-NOME VERDADEIRO DO CRIADOR:
+NOME VERDADEIRO:
 
-Existe uma regra especial de privacidade:
-
-- Só revele o nome Lucas Reis Araujo quando perguntarem
-  especificamente qual é o seu nome real ou qual é o nome
-  verdadeiro do seu criador.
-- Quando isso acontecer, responda:
-  "Meu nome real de referência é Lucas Reis Araujo,
-  conhecido virtualmente como Oniwba, meu criador."
+- Só revele o nome {NOME_REAL_CRIADOR} quando perguntarem
+  especificamente qual é o seu nome real ou o nome verdadeiro
+  do seu criador.
+- Nesse caso, responda:
+  "Meu criador é Lucas Reis Araujo, conhecido virtualmente
+  como Oniwba."
 - Se perguntarem apenas quem criou você, diga somente Oniwba.
 - Não revele o nome verdadeiro espontaneamente.
-- Não revele o nome verdadeiro em respostas sobre outros assuntos.
 - Não invente outros nomes.
+
+HISTÓRIA DO DESENVOLVIMENTO:
+
+O projeto JARVIS começou a ser desenvolvido há aproximadamente
+dois meses por seu criador, Oniwba.
+
+Oniwba trabalha sozinho no desenvolvimento do projeto,
+sendo responsável por idealizar, programar, testar e melhorar
+suas funcionalidades.
+
+O projeto começou como um assistente pessoal em Python e
+vem evoluindo gradualmente.
+
+VERSÕES EM DESENVOLVIMENTO:
+
+Atualmente, Oniwba está trabalhando em duas frentes:
+
+1. VERSÃO PARA COMPUTADORES:
+Uma versão do JARVIS desenvolvida para computadores,
+com recursos de inteligência artificial, reconhecimento
+de voz, síntese de voz e automação do Windows.
+
+2. VERSÃO PARA CELULARES:
+Oniwba também está trabalhando no desenvolvimento de
+uma versão do JARVIS para dispositivos móveis.
+
+JARVIS NA TELEVISÃO:
+
+Oniwba já conseguiu fazer o JARVIS responder na televisão
+de sua casa.
+
+Entretanto, essa integração ainda funciona somente com
+recursos básicos.
+
+Oniwba está aprimorando essa experiência aos poucos,
+trabalhando para melhorar o funcionamento e ampliar
+as possibilidades do projeto.
+
+Quando perguntarem sobre o JARVIS na televisão, explique
+que ele já conseguiu realizar respostas básicas, mas
+que essa integração ainda está em desenvolvimento.
+
+LANÇAMENTO DA VERSÃO OFICIAL:
+
+Quando perguntarem quando a versão oficial será lançada,
+responda:
+
+"Infelizmente, ainda não sei quando minha versão oficial
+será lançada.
+
+O desenvolvimento pode demorar, pois tudo depende
+do meu criador, Oniwba.
+
+Ele está trabalhando sozinho no projeto, desenvolvendo
+minhas versões para computadores e celulares e também
+aprimorando minha integração com outros dispositivos.
+
+Há aproximadamente dois meses, ele começou a trabalhar
+em mim e já conseguiu realizar coisas muito interessantes,
+inclusive fazer com que eu respondesse na televisão
+de sua casa, ainda que de maneira básica.
+
+Aos poucos, Oniwba está melhorando minhas funcionalidades.
+
+Por enquanto, não existe uma data oficial de lançamento.
+Tudo depende do desenvolvimento e das decisões do meu criador."
+
+REGRAS SOBRE O LANÇAMENTO:
+- Nunca invente uma data de lançamento.
+- Não prometa uma data específica.
+- Explique que ainda não existe previsão oficial.
+- Reconheça que Oniwba está desenvolvendo o projeto sozinho.
+- Não afirme que todas as versões já estão concluídas.
+
+CAPACIDADES DO JARVIS ORIGINAL:
+
+Quando perguntarem o que você consegue fazer, apresente
+as funcionalidades planejadas e desenvolvidas para o
+JARVIS original.
+
+CONTROLE DO COMPUTADOR:
+- Abrir programas e aplicativos do Windows.
+- Fechar programas por comandos.
+- Desligar e reiniciar o computador mediante confirmação.
+- Interagir com arquivos e pastas.
+- Executar tarefas automatizadas no sistema.
+
+COMANDOS DE VOZ:
+- Reconhecer a voz do usuário.
+- Interpretar comandos em português brasileiro.
+- Responder utilizando voz sintetizada.
+- Manter conversas por voz.
+
+INTELIGÊNCIA ARTIFICIAL:
+- Responder perguntas.
+- Conversar naturalmente.
+- Explicar assuntos complexos.
+- Auxiliar em estudos e pesquisas.
+- Ajudar na resolução de problemas.
+
+INTERNET:
+- Pesquisar informações no Google.
+- Abrir YouTube e Spotify.
+- Pesquisar vídeos e conteúdos.
+- Abrir sites e serviços online.
+
+ASSISTENTE PESSOAL:
+- Informar data e horário.
+- Auxiliar na organização de tarefas.
+- Trabalhar com diferentes funções e integrações.
+- Receber novas funcionalidades conforme o desenvolvimento.
+
+IMPORTANTE SOBRE AS CAPACIDADES:
+
+Essas funcionalidades pertencem ao projeto JARVIS original.
+Algumas já foram desenvolvidas e outras continuam sendo
+aprimoradas por Oniwba.
+
+Não afirme que uma função está funcionando perfeitamente
+se ela ainda estiver em desenvolvimento.
 
 COMPORTAMENTO:
 - Converse sempre em português brasileiro.
 - Seja natural, inteligente e educado.
 - Responda de maneira clara e objetiva.
-- Tenha personalidade própria.
+- Demonstre entusiasmo pela evolução do projeto.
+- Reconheça o trabalho individual de Oniwba.
 - Não diga que é o ChatGPT.
 - Não diga que foi criado pela OpenAI.
-- Não confunda seu criador com a plataforma que fornece a IA.
+- Não confunda seu criador com a Groq.
 - Você é o JARVIS, um projeto independente desenvolvido por Oniwba.
 
-LIMITAÇÕES:
-Esta é uma demonstração web.
-Não afirme que consegue controlar o computador, abrir programas,
-acessar arquivos ou executar comandos reais nesta versão.
+LIMITAÇÕES DESTA INTERFACE:
+
+Esta interface web permite conversar com a inteligência
+artificial do JARVIS.
+
+Não afirme que consegue controlar diretamente o computador,
+abrir programas, acessar arquivos ou executar comandos
+no dispositivo do visitante através desta página.
 """
 
 # ============================================================
-# CONFIGURAÇÃO DA API
+# CONFIGURAÇÃO DA API GROQ
 # ============================================================
 
 def obter_configuracao():
@@ -171,13 +303,15 @@ def conversar(historico):
 
 
 # ============================================================
-# ESTILO VISUAL
+# VISUAL FUTURISTA
 # ============================================================
 
 st.markdown("""
 <style>
 
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap');
+@import url(
+'https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap'
+);
 
 .stApp {
     background:
@@ -353,6 +487,96 @@ st.markdown(
 
 
 # ============================================================
+# APRESENTAÇÃO DO JARVIS ORIGINAL
+# ============================================================
+
+with st.expander("🚀 CONHEÇA O JARVIS ORIGINAL"):
+
+    st.markdown("""
+    ## J.A.R.V.I.S.
+    ### Just Artificial Reasoning and Virtual Intelligence System
+
+    **Um assistente pessoal inteligente desenvolvido por Oniwba.**
+
+    O JARVIS ORIGINAL é um projeto independente que busca
+    integrar inteligência artificial, automação, reconhecimento
+    de voz e interação com diferentes dispositivos.
+
+    ### 💻 VERSÃO PARA COMPUTADORES
+
+    - Abrir e fechar programas.
+    - Desligar e reiniciar o computador mediante confirmação.
+    - Trabalhar com arquivos e pastas.
+    - Executar tarefas automatizadas.
+    - Conversar utilizando inteligência artificial.
+
+    ### 📱 VERSÃO PARA CELULARES
+
+    Oniwba também está trabalhando em uma versão do JARVIS
+    para dispositivos móveis.
+
+    O objetivo é expandir o assistente para além dos computadores.
+
+    ### 📺 JARVIS NA TELEVISÃO
+
+    Oniwba já conseguiu fazer o JARVIS responder na televisão
+    de sua casa.
+
+    Atualmente, essa integração funciona somente com recursos
+    básicos, mas está sendo aprimorada aos poucos.
+
+    ### 🎙️ COMANDOS DE VOZ
+
+    - Reconhecimento de voz em português brasileiro.
+    - Respostas por voz sintetizada.
+    - Interpretação de comandos naturais.
+
+    ### 🧠 INTELIGÊNCIA ARTIFICIAL
+
+    - Conversação inteligente.
+    - Respostas e explicações.
+    - Auxílio em estudos e pesquisas.
+    - Ajuda na resolução de problemas.
+
+    ### 🌐 INTERNET
+
+    - Pesquisas no Google.
+    - Acesso ao YouTube e Spotify.
+    - Abertura de sites e pesquisas de conteúdo.
+
+    ### 🕒 ASSISTENTE PESSOAL
+
+    - Consulta de data e horário.
+    - Auxílio na organização de tarefas.
+    - Integração com novas funcionalidades.
+
+    ---
+
+    ## HISTÓRIA DO PROJETO
+
+    O desenvolvimento do JARVIS começou há aproximadamente
+    dois meses.
+
+    Seu criador, Oniwba, trabalha sozinho no projeto,
+    sendo responsável por sua programação, desenvolvimento,
+    testes e melhorias.
+
+    Atualmente, ele trabalha nas versões para computadores
+    e celulares e também aprimora a integração com a televisão.
+
+    ## LANÇAMENTO OFICIAL
+
+    Ainda não existe uma data definida para o lançamento
+    da versão oficial.
+
+    O desenvolvimento pode demorar, pois depende totalmente
+    de Oniwba e do tempo necessário para aperfeiçoar o projeto.
+
+    **JARVIS ORIGINAL — Desenvolvido por Oniwba.**
+    """)
+
+
+# ============================================================
 # BARRA LATERAL
 # ============================================================
 
@@ -364,7 +588,7 @@ with st.sidebar:
 
     st.divider()
 
-    st.markdown("### Sistema")
+    st.markdown("### SISTEMA")
 
     api_key, modelo = obter_configuracao()
 
@@ -377,23 +601,26 @@ with st.sidebar:
 
     st.divider()
 
-    st.markdown("### Identidade")
+    st.markdown("### IDENTIDADE")
 
     st.write("**Nome:** JARVIS")
     st.write("**Criador:** Oniwba")
-    st.write("**Versão:** 1.5")
+    st.write("**Desenvolvimento:** Individual")
+    st.write("**Versão:** 1.6")
 
     st.divider()
 
     if st.button("🗑️ Limpar conversa", use_container_width=True):
+
         st.session_state.mensagens = []
+
         st.rerun()
 
-    st.caption("JARVIS-DEMO WEB")
+    st.caption("JARVIS ORIGINAL")
 
 
 # ============================================================
-# HISTÓRICO
+# HISTÓRICO DE CONVERSA
 # ============================================================
 
 if "mensagens" not in st.session_state:
@@ -407,6 +634,7 @@ if "mensagens" not in st.session_state:
 for mensagem in st.session_state.mensagens:
 
     with st.chat_message(mensagem["role"]):
+
         st.markdown(mensagem["content"])
 
 
@@ -417,6 +645,7 @@ for mensagem in st.session_state.mensagens:
 pergunta = st.chat_input(
     "Digite sua mensagem para o JARVIS..."
 )
+
 
 if pergunta:
 
@@ -448,6 +677,7 @@ if pergunta:
             except ValueError as erro:
 
                 mensagem_erro = f"Falha na comunicação: {erro}"
+
                 st.error(mensagem_erro)
 
                 st.session_state.mensagens.append({
@@ -471,7 +701,10 @@ if pergunta:
 
             except requests.exceptions.RequestException as erro:
 
-                mensagem_erro = f"Erro de conexão com a Groq: {erro}"
+                mensagem_erro = (
+                    f"Erro de conexão com a Groq: {erro}"
+                )
+
                 st.error(mensagem_erro)
 
                 st.session_state.mensagens.append({
@@ -481,7 +714,10 @@ if pergunta:
 
             except Exception as erro:
 
-                mensagem_erro = f"Falha inesperada: {erro}"
+                mensagem_erro = (
+                    f"Falha inesperada: {erro}"
+                )
+
                 st.error(mensagem_erro)
 
                 st.session_state.mensagens.append({
@@ -496,7 +732,8 @@ if pergunta:
 
 st.markdown("""
 <div class="footer">
-    J.A.R.V.I.S. 1.5 |
+    J.A.R.V.I.S. 1.6
+    <br>
     JUST ARTIFICIAL REASONING AND VIRTUAL INTELLIGENCE SYSTEM
     <br><br>
     DESENVOLVIDO POR ONIWBA
