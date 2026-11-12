@@ -1,0 +1,115 @@
+
+const chat = document.getElementById("chat");
+const form = document.getElementById("chat-form");
+const input = document.getElementById("user-input");
+
+let memorias = [];
+
+function adicionarMensagem(remetente, texto, tipo) {
+    const mensagem = document.createElement("div");
+    mensagem.className = `message ${tipo}`;
+
+    const nome = document.createElement("strong");
+    nome.textContent = remetente;
+
+    const conteudo = document.createElement("p");
+    conteudo.textContent = texto;
+
+    mensagem.append(nome, conteudo);
+    chat.appendChild(mensagem);
+    chat.scrollTop = chat.scrollHeight;
+}
+
+function responder(comando) {
+    const texto = comando.toLowerCase().normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "");
+
+    if (texto.includes("hora")) {
+        return `Agora são ${new Date().toLocaleTimeString("pt-BR")}.`;
+    }
+
+    if (texto.includes("data") || texto.includes("dia de hoje")) {
+        return `Hoje é ${new Date().toLocaleDateString("pt-BR")}.`;
+    }
+
+    if (texto.includes("ajuda") || texto.includes("funcoes")) {
+        return "Posso demonstrar conversação, memória, controle de mídia, aplicativos e gerenciamento de arquivos.";
+    }
+
+    if (texto.includes("spotify") || texto.includes("musica")) {
+        return "Módulo de música acionado! Na versão completa, o JARVIS possui integração com Spotify e YouTube. Esta é uma simulação.";
+    }
+
+    if (texto.includes("calculadora") || texto.includes("aplicativo")) {
+        return "Solicitação de abertura de aplicativo recebida. Na versão original, posso abrir aplicativos cadastrados no Windows.";
+    }
+
+    if (texto.includes("arquivo")) {
+        return "Módulo de gerenciamento de arquivos selecionado. Posso demonstrar pesquisa, criação, movimentação e organização de arquivos.";
+    }
+
+    if (texto.includes("memoria") || texto.includes("lembrar")) {
+        return "Para guardar uma informação, digite: lembre que eu gosto de tecnologia.";
+    }
+
+    if (texto.startsWith("lembre que") || texto.startsWith("lembre de")) {
+        const memoria = comando.replace(/^lembre (que|de)\s*/i, "").trim();
+
+        if (!memoria) return "Diga qual informação deseja guardar.";
+
+        memorias.push(memoria);
+        return "Informação armazenada na memória temporária desta demonstração.";
+    }
+
+    if (texto.includes("o que voce lembra") || texto.includes("minhas memorias")) {
+        return memorias.length
+            ? "Minhas memórias: " + memorias.join("; ")
+            : "Ainda não tenho memórias armazenadas nesta sessão.";
+    }
+
+    if (texto.includes("como voce funciona")) {
+        return "Sou uma demonstração web do JARVIS, projeto originalmente desenvolvido em Python com reconhecimento de voz, IA e automação.";
+    }
+
+    if (texto.includes("ola") || texto.includes("oi")) {
+        return "Olá! É um prazer falar com você. O que deseja fazer?";
+    }
+
+    if (texto.includes("seu nome")) {
+        return "Meu nome é JARVIS, seu assistente pessoal.";
+    }
+
+    if (texto.includes("obrigado") || texto.includes("obrigada")) {
+        return "Sempre à disposição!";
+    }
+
+    return "Entendi sua solicitação! Esta versão é demonstrativa. Na versão completa, utilizo inteligência artificial para responder perguntas de forma mais avançada.";
+}
+
+function processarComando(comando) {
+    if (!comando.trim()) return;
+
+    adicionarMensagem("VOCÊ", comando, "user");
+
+    const resposta = responder(comando);
+
+    setTimeout(() => {
+        adicionarMensagem("JARVIS", resposta, "jarvis");
+    }, 350);
+}
+
+form.addEventListener("submit", function(event) {
+    event.preventDefault();
+
+    const comando = input.value.trim();
+
+    if (!comando) return;
+
+    processarComando(comando);
+    input.value = "";
+    input.focus();
+});
+
+function comandoRapido(comando) {
+    processarComando(comando);
+}

@@ -1,0 +1,112 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JARVIS | Assistente Pessoal</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="background"></div>
+
+    <header>
+        <div class="logo">
+            <div class="logo-icon">J</div>
+            <div>
+                <h1>J.A.R.V.I.S</h1>
+                <span>PERSONAL AI SYSTEM</span>
+            </div>
+        </div>
+
+        <div class="status">
+            <span class="pulse"></span>
+            SISTEMA ONLINE
+        </div>
+    </header>
+
+    <main>
+
+        <section class="hero">
+            <div class="circle">
+                <div class="circle-inner">
+                    <div class="core">J</div>
+                </div>
+            </div>
+
+            <h2>ASSISTENTE PESSOAL</h2>
+            <p>Inteligência artificial e automação em uma única interface.</p>
+        </section>
+
+        <section class="dashboard">
+
+            <div class="panel">
+                <h3>TERMINAL DE COMUNICAÇÃO</h3>
+
+                <div id="chat" class="chat">
+                    <div class="message jarvis">
+                        <strong>JARVIS</strong>
+                        <p>Olá! Sou o JARVIS. Como posso ajudar?</p>
+                    </div>
+                </div>
+
+                <form id="chat-form">
+                    <input
+                        type="text"
+                        id="user-input"
+                        placeholder="Digite um comando..."
+                        autocomplete="off"
+                        required
+                    >
+                    <button type="submit">ENVIAR</button>
+                </form>
+
+                <div class="suggestions">
+                    <button onclick="comandoRapido('Que horas são?')">HORÁRIO</button>
+                    <button onclick="comandoRapido('Qual a data de hoje?')">DATA</button>
+                    <button onclick="comandoRapido('Quais são suas funções?')">AJUDA</button>
+                </div>
+            </div>
+
+            <div class="panel functions">
+                <h3>FUNCIONALIDADES</h3>
+
+                <button onclick="comandoRapido('Abra o Spotify')">
+                    <span>♫</span> Controle de música
+                </button>
+
+                <button onclick="comandoRapido('Abra a calculadora')">
+                    <span>▦</span> Aplicativos
+                </button>
+
+                <button onclick="comandoRapido('Pesquise um arquivo')">
+                    <span>▤</span> Gerenciamento de arquivos
+                </button>
+
+                <button onclick="comandoRapido('Quero salvar uma memória')">
+                    <span>◈</span> Memória inteligente
+                </button>
+
+                <button onclick="comandoRapido('Como você funciona?')">
+                    <span>◎</span> Inteligência artificial
+                </button>
+
+                <div class="system-info">
+                    <p>VERSÃO <strong>DEMO 1.0</strong></p>
+                    <p>TECNOLOGIA <strong>PYTHON / WEB</strong></p>
+                    <p>MODO <strong>SIMULAÇÃO</strong></p>
+                </div>
+            </div>
+
+        </section>
+
+        <footer>
+            J.A.R.V.I.S © 2026 — DEMONSTRAÇÃO INTERATIVA
+        </footer>
+
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
