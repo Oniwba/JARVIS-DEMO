@@ -1,4 +1,2 @@
-# Nenhuma dependência externa é necessária.
-# A demonstração utiliza bibliotecas nativas do Python.
-streamlit
-groq
+streamlit==1.50.0
+groq==0.31.0
