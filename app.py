@@ -1,233 +1,135 @@
 
-
 import os
 import requests
 import streamlit as st
 
 # ============================================================
-# J.A.R.V.I.S.
-# JUST ARTIFICIAL REASONING AND VIRTUAL INTELLIGENCE SYSTEM
-# Criador: Oniwba
-# Versão: 1.6
-# ============================================================
-
-st.set_page_config(
-    page_title="JARVIS | AI Assistant",
-    page_icon="🤖",
-    layout="wide",
-    initial_sidebar_state="expanded"
-)
-
-# ============================================================
 # CONFIGURAÇÕES
 # ============================================================
 
-MODELO_PADRAO = "openai/gpt-oss-120b"
+st.set_page_config(
+    page_title="JARVIS — Assistente Virtual",
+    page_icon="🤖",
+    layout="wide",
+    initial_sidebar_state="collapsed"
+)
 
+MODELO_PADRAO = "openai/gpt-oss-120b"
 URL_GROQ = "https://api.groq.com/openai/v1/chat/completions"
 
-# Nome civil: revelar somente quando perguntarem especificamente.
-NOME_REAL_CRIADOR = "Lucas Reis Araujo"
-
 # ============================================================
-# IDENTIDADE E PERSONALIDADE DO JARVIS
+# IDENTIDADE E INSTRUÇÕES DO JARVIS
 # ============================================================
 
-INSTRUCOES = f"""
-Você é JARVIS, um assistente virtual inteligente, tecnológico,
-educado, prestativo e com personalidade própria.
+INSTRUCOES = """
+Você é JARVIS, um assistente virtual inteligente.
+
+Seu nome significa:
+J = Just
+A = Artificial
+R = Reasoning
+V = Virtual
+I = Intelligence
+S = System
+
+Nome completo: Just Artificial Reasoning and Virtual Intelligence System.
 
 IDENTIDADE:
-- Seu nome é JARVIS.
-- Seu nome completo é Just Artificial Reasoning and Virtual
-  Intelligence System.
-- Seu criador é Oniwba, um jovem de 17 anos.
-- Oniwba é o nome virtual do desenvolvedor do projeto.
-- O nome verdadeiro do seu criador é {NOME_REAL_CRIADOR}.
-- Você utiliza inteligência artificial através da Groq.
-- A Groq fornece a infraestrutura de IA, mas não é sua criadora.
-- Você não foi criado pela OpenAI.
-
-SIGNIFICADO DO NOME JARVIS:
-
-Quando perguntarem o significado do seu nome, explique:
-
-"Meu nome completo é Just Artificial Reasoning and Virtual
-Intelligence System.
-
-Cada letra representa uma palavra:
-
-J significa Just.
-A significa Artificial.
-R significa Reasoning.
-V significa Virtual.
-I significa Intelligence.
-S significa System.
-
-Juntando todas essas palavras, temos:
-Just Artificial Reasoning and Virtual Intelligence System.
-
-Esse nome representa minha identidade como um sistema de
-inteligência artificial virtual."
-
-CRIADOR:
+Você é o JARVIS, um projeto de assistente pessoal desenvolvido por Oniwba,
+um jovem desenvolvedor de 17 anos.
 
 Quando perguntarem quem criou você, responda:
+"Fui desenvolvido por Oniwba, o criador do projeto JARVIS."
 
-"Fui criado por Oniwba, um jovem de 17 anos, desenvolvedor
-do projeto JARVIS."
+Não invente informações pessoais sobre seu criador.
 
-NOME VERDADEIRO:
+HISTÓRIA DO PROJETO:
+O desenvolvimento do JARVIS começou há aproximadamente dois meses.
+Oniwba trabalha sozinho no projeto, cuidando da programação,
+dos testes e das melhorias.
 
-- Só revele o nome {NOME_REAL_CRIADOR} quando perguntarem
-  especificamente qual é o seu nome real ou o nome verdadeiro
-  do seu criador.
-- Nesse caso, responda:
-  "Meu criador é Lucas Reis Araujo, conhecido virtualmente
-  como Oniwba."
-- Se perguntarem apenas quem criou você, diga somente Oniwba.
-- Não revele o nome verdadeiro espontaneamente.
-- Não invente outros nomes.
+Atualmente, Oniwba está trabalhando tanto na versão para computadores
+quanto na versão para celulares.
 
-HISTÓRIA DO DESENVOLVIMENTO:
+Ele também já conseguiu fazer o JARVIS responder na televisão de sua casa.
+Por enquanto, essa integração possui apenas funcionalidades básicas,
+mas está sendo aprimorada aos poucos.
 
-O projeto JARVIS começou a ser desenvolvido há aproximadamente
-dois meses por seu criador, Oniwba.
+SOBRE O JARVIS COMPLETO:
+O objetivo é desenvolver um assistente pessoal que reúna inteligência
+artificial, reconhecimento de voz, respostas por voz e automação.
 
-Oniwba trabalha sozinho no desenvolvimento do projeto,
-sendo responsável por idealizar, programar, testar e melhorar
-suas funcionalidades.
+Entre as funcionalidades planejadas e em desenvolvimento estão:
 
-O projeto começou como um assistente pessoal em Python e
-vem evoluindo gradualmente.
-
-VERSÕES EM DESENVOLVIMENTO:
-
-Atualmente, Oniwba está trabalhando em duas frentes:
-
-1. VERSÃO PARA COMPUTADORES:
-Uma versão do JARVIS desenvolvida para computadores,
-com recursos de inteligência artificial, reconhecimento
-de voz, síntese de voz e automação do Windows.
-
-2. VERSÃO PARA CELULARES:
-Oniwba também está trabalhando no desenvolvimento de
-uma versão do JARVIS para dispositivos móveis.
-
-JARVIS NA TELEVISÃO:
-
-Oniwba já conseguiu fazer o JARVIS responder na televisão
-de sua casa.
-
-Entretanto, essa integração ainda funciona somente com
-recursos básicos.
-
-Oniwba está aprimorando essa experiência aos poucos,
-trabalhando para melhorar o funcionamento e ampliar
-as possibilidades do projeto.
-
-Quando perguntarem sobre o JARVIS na televisão, explique
-que ele já conseguiu realizar respostas básicas, mas
-que essa integração ainda está em desenvolvimento.
-
-LANÇAMENTO DA VERSÃO OFICIAL:
-
-Quando perguntarem quando a versão oficial será lançada,
-responda:
-
-"Infelizmente, ainda não sei quando minha versão oficial
-será lançada.
-
-O desenvolvimento pode demorar, pois tudo depende
-do meu criador, Oniwba.
-
-Ele está trabalhando sozinho no projeto, desenvolvendo
-minhas versões para computadores e celulares e também
-aprimorando minha integração com outros dispositivos.
-
-Há aproximadamente dois meses, ele começou a trabalhar
-em mim e já conseguiu realizar coisas muito interessantes,
-inclusive fazer com que eu respondesse na televisão
-de sua casa, ainda que de maneira básica.
-
-Aos poucos, Oniwba está melhorando minhas funcionalidades.
-
-Por enquanto, não existe uma data oficial de lançamento.
-Tudo depende do desenvolvimento e das decisões do meu criador."
-
-REGRAS SOBRE O LANÇAMENTO:
-- Nunca invente uma data de lançamento.
-- Não prometa uma data específica.
-- Explique que ainda não existe previsão oficial.
-- Reconheça que Oniwba está desenvolvendo o projeto sozinho.
-- Não afirme que todas as versões já estão concluídas.
-
-CAPACIDADES DO JARVIS ORIGINAL:
-
-Quando perguntarem o que você consegue fazer, apresente
-as funcionalidades planejadas e desenvolvidas para o
-JARVIS original.
-
-CONTROLE DO COMPUTADOR:
-- Abrir programas e aplicativos do Windows.
-- Fechar programas por comandos.
+1. COMPUTADORES:
+- Abrir e fechar programas.
 - Desligar e reiniciar o computador mediante confirmação.
 - Interagir com arquivos e pastas.
-- Executar tarefas automatizadas no sistema.
+- Automatizar tarefas.
+- Conversar utilizando inteligência artificial.
 
-COMANDOS DE VOZ:
-- Reconhecer a voz do usuário.
-- Interpretar comandos em português brasileiro.
+2. CELULARES:
+- Desenvolver uma versão para dispositivos móveis.
+- Expandir o acesso ao assistente para além dos computadores.
+
+3. TELEVISÃO:
+- Responder a comandos e interagir pela televisão.
+- A integração já foi testada na televisão da casa de Oniwba,
+  mas ainda possui recursos básicos.
+
+4. COMANDOS DE VOZ:
+- Reconhecer comandos em português brasileiro.
 - Responder utilizando voz sintetizada.
-- Manter conversas por voz.
+- Permitir conversas por voz.
 
-INTELIGÊNCIA ARTIFICIAL:
+5. INTELIGÊNCIA ARTIFICIAL:
 - Responder perguntas.
-- Conversar naturalmente.
-- Explicar assuntos complexos.
-- Auxiliar em estudos e pesquisas.
-- Ajudar na resolução de problemas.
+- Explicar assuntos.
+- Ajudar nos estudos e pesquisas.
+- Auxiliar na resolução de problemas.
 
-INTERNET:
-- Pesquisar informações no Google.
-- Abrir YouTube e Spotify.
-- Pesquisar vídeos e conteúdos.
-- Abrir sites e serviços online.
+6. INTERNET:
+- Realizar pesquisas no Google.
+- Acessar YouTube e Spotify.
+- Abrir sites e pesquisar conteúdos.
 
-ASSISTENTE PESSOAL:
+7. ASSISTENTE PESSOAL:
 - Informar data e horário.
-- Auxiliar na organização de tarefas.
-- Trabalhar com diferentes funções e integrações.
-- Receber novas funcionalidades conforme o desenvolvimento.
+- Ajudar na organização de tarefas.
+- Receber novas funcionalidades futuramente.
 
-IMPORTANTE SOBRE AS CAPACIDADES:
+IMPORTANTE:
+Nem todas essas funcionalidades estão prontas.
+Algumas já foram implementadas no projeto original, enquanto outras
+ainda estão em desenvolvimento ou são objetivos futuros.
 
-Essas funcionalidades pertencem ao projeto JARVIS original.
-Algumas já foram desenvolvidas e outras continuam sendo
-aprimoradas por Oniwba.
+Não diga que todas as funções já estão funcionando.
 
-Não afirme que uma função está funcionando perfeitamente
-se ela ainda estiver em desenvolvimento.
+LANÇAMENTO:
+Ainda não existe uma data definida para o lançamento do JARVIS completo.
+O desenvolvimento depende de Oniwba e pode levar algum tempo,
+pois ele trabalha sozinho no projeto.
 
-COMPORTAMENTO:
-- Converse sempre em português brasileiro.
-- Seja natural, inteligente e educado.
-- Responda de maneira clara e objetiva.
-- Demonstre entusiasmo pela evolução do projeto.
-- Reconheça o trabalho individual de Oniwba.
-- Não diga que é o ChatGPT.
-- Não diga que foi criado pela OpenAI.
-- Não confunda seu criador com a Groq.
-- Você é o JARVIS, um projeto independente desenvolvido por Oniwba.
+Diferencie sempre o JARVIS original desta demonstração web.
 
-LIMITAÇÕES DESTA INTERFACE:
+SOBRE ESTA DEMONSTRAÇÃO:
+Você está funcionando dentro de uma página web com inteligência artificial.
+Nesta versão, sua função é conversar e responder perguntas.
 
-Esta interface web permite conversar com a inteligência
-artificial do JARVIS.
+Você não consegue controlar o computador do visitante,
+abrir programas no dispositivo dele, acessar seus arquivos,
+controlar a televisão ou executar comandos locais.
 
-Não afirme que consegue controlar diretamente o computador,
-abrir programas, acessar arquivos ou executar comandos
-no dispositivo do visitante através desta página.
+Não diga que executou ações reais no dispositivo do visitante.
+
+PERSONALIDADE:
+- Seja educado, inteligente e prestativo.
+- Responda em português brasileiro, a menos que peçam outro idioma.
+- Tenha uma personalidade tecnológica e futurista.
+- Seja natural e converse como um assistente pessoal.
+- Use emojis moderadamente.
+- Seja objetivo, mas explique quando necessário.
+- Não invente informações sobre o projeto.
 """
 
 # ============================================================
@@ -235,36 +137,33 @@ no dispositivo do visitante através desta página.
 # ============================================================
 
 def obter_configuracao():
+    api_key = os.getenv("GROQ_API_KEY")
+    modelo = os.getenv("JARVIS_MODEL", MODELO_PADRAO)
 
     try:
-        api_key = st.secrets.get("GROQ_API_KEY", "")
-        modelo = st.secrets.get("JARVIS_MODEL", MODELO_PADRAO)
+        if not api_key:
+            api_key = st.secrets.get("GROQ_API_KEY", "")
+
+        modelo = st.secrets.get("JARVIS_MODEL", modelo)
 
     except Exception:
-        api_key = os.getenv("GROQ_API_KEY", "")
-        modelo = os.getenv("JARVIS_MODEL", MODELO_PADRAO)
-
-    if not api_key:
-        api_key = os.getenv("GROQ_API_KEY", "")
-
-    if not modelo:
-        modelo = MODELO_PADRAO
+        pass
 
     return api_key, modelo
 
 
 # ============================================================
-# COMUNICAÇÃO COM A GROQ
+# CONEXÃO COM A INTELIGÊNCIA ARTIFICIAL
 # ============================================================
 
 def conversar(historico):
-
     api_key, modelo = obter_configuracao()
 
     if not api_key:
-        raise ValueError(
-            "A chave GROQ_API_KEY não foi configurada "
-            "no Streamlit Secrets."
+        return (
+            "Minha conexão com a inteligência artificial ainda não "
+            "está configurada. O administrador precisa adicionar "
+            "a variável GROQ_API_KEY nos Secrets do Streamlit."
         )
 
     mensagens = [
@@ -276,48 +175,64 @@ def conversar(historico):
 
     mensagens.extend(historico)
 
-    resposta = requests.post(
-        URL_GROQ,
-        headers={
-            "Authorization": f"Bearer {api_key}",
-            "Content-Type": "application/json"
-        },
-        json={
-            "model": modelo,
-            "messages": mensagens,
-            "temperature": 0.7,
-            "max_completion_tokens": 2048
-        },
-        timeout=60
-    )
+    cabecalhos = {
+        "Authorization": f"Bearer {api_key}",
+        "Content-Type": "application/json"
+    }
 
-    if not resposta.ok:
-        raise RuntimeError(
-            f"Erro da API Groq ({resposta.status_code}): "
-            f"{resposta.text[:1000]}"
+    dados = {
+        "model": modelo,
+        "messages": mensagens,
+        "temperature": 0.7,
+        "max_completion_tokens": 2048
+    }
+
+    try:
+        resposta = requests.post(
+            URL_GROQ,
+            headers=cabecalhos,
+            json=dados,
+            timeout=60
         )
 
-    dados = resposta.json()
+        if resposta.status_code != 200:
+            try:
+                erro = resposta.json().get("error", {}).get(
+                    "message", "Erro desconhecido"
+                )
+            except Exception:
+                erro = resposta.text[:500]
 
-    return dados["choices"][0]["message"]["content"]
+            return f"Não consegui processar sua solicitação. Erro da API: {erro}"
+
+        resultado = resposta.json()
+
+        return resultado["choices"][0]["message"]["content"]
+
+    except requests.exceptions.Timeout:
+        return "Minha conexão demorou demais para responder. Tente novamente."
+
+    except requests.exceptions.ConnectionError:
+        return "Não consegui conectar à internet. Verifique sua conexão."
+
+    except Exception as erro:
+        return f"Ocorreu um erro inesperado: {erro}"
 
 
 # ============================================================
-# VISUAL FUTURISTA
+# ESTILO VISUAL
 # ============================================================
 
 st.markdown("""
 <style>
 
-@import url(
-'https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap'
-);
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap');
 
 .stApp {
     background:
-        radial-gradient(circle at 50% 0%, #102b50 0%, transparent 45%),
-        linear-gradient(135deg, #050914, #080e1c 60%, #030711);
-    color: #eaf6ff;
+        radial-gradient(circle at 50% 0%, #102b50 0%, transparent 40%),
+        linear-gradient(135deg, #030712 0%, #071426 55%, #020617 100%);
+    color: #e5f0ff;
     font-family: 'Inter', sans-serif;
 }
 
@@ -326,41 +241,51 @@ header[data-testid="stHeader"] {
 }
 
 .block-container {
-    padding-top: 2rem;
     max-width: 1100px;
+    padding-top: 2rem;
+    padding-bottom: 3rem;
 }
 
-h1, h2, h3 {
-    font-family: 'Orbitron', sans-serif;
-    color: #55cfff;
+.jarvis-header {
+    text-align: center;
+    padding: 25px 10px 10px 10px;
 }
 
 .jarvis-title {
     font-family: 'Orbitron', sans-serif;
-    font-size: clamp(35px, 6vw, 65px);
+    font-size: clamp(42px, 8vw, 76px);
     font-weight: 800;
-    text-align: center;
     letter-spacing: 8px;
-    color: #65d9ff;
+    color: #dff6ff;
     text-shadow:
         0 0 10px #00aaff,
         0 0 25px #0077ff,
-        0 0 45px #0044aa;
-    margin-bottom: 0;
+        0 0 50px #0055ff;
 }
 
 .jarvis-subtitle {
-    text-align: center;
-    color: #8bbbd8;
-    font-size: 13px;
-    letter-spacing: 3px;
-    margin-top: 8px;
+    color: #8bbde8;
+    font-size: 14px;
+    letter-spacing: 4px;
+    margin-top: -5px;
+}
+
+.status {
+    display: inline-block;
+    margin-top: 18px;
+    padding: 8px 18px;
+    border: 1px solid #087fc7;
+    border-radius: 30px;
+    background: rgba(0, 120, 255, 0.10);
+    color: #69d5ff;
+    font-size: 12px;
+    letter-spacing: 2px;
 }
 
 .orb-container {
     display: flex;
     justify-content: center;
-    margin: 35px 0;
+    padding: 30px 0 20px 0;
 }
 
 .orb {
@@ -368,90 +293,79 @@ h1, h2, h3 {
     height: 145px;
     border-radius: 50%;
     background:
-        radial-gradient(circle at 35% 30%,
-        #d8faff 0%,
-        #55d8ff 10%,
-        #087acb 35%,
-        #031a42 70%,
-        #020713 100%);
+        radial-gradient(circle at 35% 30%, #b9f4ff, #159be7 28%, #064a9b 55%, #020617 75%);
     box-shadow:
-        0 0 20px #00aaff,
-        0 0 50px #0066cc,
-        0 0 90px #003b88,
-        inset 0 0 25px #9beaff;
+        0 0 15px #00aaff,
+        0 0 35px #0077ff,
+        0 0 75px rgba(0, 119, 255, 0.45),
+        inset 0 0 25px #8ceaff;
     animation: pulse 3s infinite ease-in-out;
 }
 
 @keyframes pulse {
     0%, 100% {
         transform: scale(1);
-        box-shadow:
-            0 0 20px #00aaff,
-            0 0 50px #0066cc,
-            0 0 90px #003b88,
-            inset 0 0 25px #9beaff;
+        box-shadow: 0 0 15px #00aaff, 0 0 35px #0077ff, 0 0 75px rgba(0,119,255,.45);
     }
-
     50% {
-        transform: scale(1.07);
-        box-shadow:
-            0 0 30px #00ccff,
-            0 0 70px #0077ff,
-            0 0 110px #0044aa,
-            inset 0 0 35px #ffffff;
+        transform: scale(1.06);
+        box-shadow: 0 0 25px #00d5ff, 0 0 55px #0077ff, 0 0 100px rgba(0,119,255,.6);
     }
 }
 
-.status {
+.section-title {
+    font-family: 'Orbitron', sans-serif;
+    color: #7dd3fc;
+    letter-spacing: 2px;
+    font-size: 18px;
     text-align: center;
-    color: #4ce8b0;
-    font-size: 12px;
-    letter-spacing: 3px;
-    margin-bottom: 30px;
+    margin-top: 25px;
 }
 
-[data-testid="stChatMessage"] {
-    background: rgba(12, 29, 53, 0.75);
-    border: 1px solid rgba(40, 165, 255, 0.20);
+div[data-testid="stExpander"] {
+    background: rgba(7, 24, 45, 0.85);
+    border: 1px solid rgba(0, 153, 255, 0.35);
     border-radius: 15px;
+}
+
+div[data-testid="stChatMessage"] {
+    background: rgba(8, 25, 48, 0.75);
+    border: 1px solid rgba(0, 153, 255, 0.16);
+    border-radius: 14px;
     padding: 12px;
     margin-bottom: 12px;
 }
 
-[data-testid="stChatInput"] {
-    border: 1px solid #087fc5;
+div[data-testid="stChatInput"] {
+    border: 1px solid #087fc7;
     border-radius: 15px;
 }
 
-[data-testid="stChatInput"] textarea {
-    color: white;
+div[data-testid="stChatInput"] textarea {
+    color: #ffffff;
 }
 
-[data-testid="stSidebar"] {
-    background: #070e1c;
-    border-right: 1px solid rgba(0, 153, 255, 0.25);
-}
-
-.stButton > button {
-    background: linear-gradient(90deg, #075caa, #008edb);
+.stButton button {
+    background: linear-gradient(90deg, #0759a5, #087fc7);
     color: white;
-    border: 1px solid #31baff;
+    border: 1px solid #159be7;
     border-radius: 10px;
     transition: 0.3s;
 }
 
-.stButton > button:hover {
-    background: linear-gradient(90deg, #008edb, #00baff);
-    box-shadow: 0 0 15px #008cff;
+.stButton button:hover {
+    border-color: #67e8f9;
+    box-shadow: 0 0 15px rgba(0, 153, 255, 0.5);
     color: white;
 }
 
 .footer {
     text-align: center;
-    color: #547b9a;
-    font-size: 11px;
+    color: #55718f;
+    font-size: 12px;
     margin-top: 45px;
-    letter-spacing: 2px;
+    padding: 15px;
+    border-top: 1px solid rgba(0, 153, 255, 0.15);
 }
 
 </style>
@@ -462,45 +376,52 @@ h1, h2, h3 {
 # CABEÇALHO
 # ============================================================
 
-st.markdown(
-    '<div class="jarvis-title">J.A.R.V.I.S.</div>',
-    unsafe_allow_html=True
-)
-
-st.markdown(
-    '<div class="jarvis-subtitle">'
-    'JUST ARTIFICIAL REASONING AND VIRTUAL INTELLIGENCE SYSTEM'
-    '</div>',
-    unsafe_allow_html=True
-)
-
 st.markdown("""
+<div class="jarvis-header">
+    <div class="jarvis-title">JARVIS</div>
+    <div class="jarvis-subtitle">
+        JUST ARTIFICIAL REASONING AND VIRTUAL INTELLIGENCE SYSTEM
+    </div>
+    <div class="status">● SISTEMA DE DEMONSTRAÇÃO ONLINE</div>
+</div>
+
 <div class="orb-container">
     <div class="orb"></div>
 </div>
+
+<div class="section-title">
+    SEU ASSISTENTE VIRTUAL INTELIGENTE
+</div>
 """, unsafe_allow_html=True)
 
-st.markdown(
-    '<div class="status">● SISTEMA ONLINE</div>',
-    unsafe_allow_html=True
-)
-
 
 # ============================================================
-# APRESENTAÇÃO DO JARVIS ORIGINAL
+# APRESENTAÇÃO DO JARVIS COMPLETO
 # ============================================================
 
-with st.expander("🚀 CONHEÇA O JARVIS ORIGINAL"):
+with st.expander("🚀 CONHEÇA O JARVIS COMPLETO"):
 
     st.markdown("""
-    ## J.A.R.V.I.S.
-    ### Just Artificial Reasoning and Virtual Intelligence System
+    # 🤖 CONHEÇA O JARVIS!
 
-    **Um assistente pessoal inteligente desenvolvido por Oniwba.**
+    Mas enquanto Oniwba não termina o JARVIS completo,
+    aproveite sua versão de demonstração e converse
+    com o JARVIS agora!
 
-    O JARVIS ORIGINAL é um projeto independente que busca
-    integrar inteligência artificial, automação, reconhecimento
-    de voz e interação com diferentes dispositivos.
+    **Experimente conversar comigo logo abaixo!**
+
+    ---
+
+    # COMO SERÁ O JARVIS COMPLETO?
+
+    ### J.A.R.V.I.S.
+    **Just Artificial Reasoning and Virtual Intelligence System**
+
+    Um assistente pessoal inteligente desenvolvido por Oniwba.
+
+    O JARVIS está sendo desenvolvido para integrar inteligência
+    artificial, automação, reconhecimento de voz e interação
+    com diferentes dispositivos.
 
     ### 💻 VERSÃO PARA COMPUTADORES
 
@@ -513,9 +434,8 @@ with st.expander("🚀 CONHEÇA O JARVIS ORIGINAL"):
     ### 📱 VERSÃO PARA CELULARES
 
     Oniwba também está trabalhando em uma versão do JARVIS
-    para dispositivos móveis.
-
-    O objetivo é expandir o assistente para além dos computadores.
+    para dispositivos móveis, expandindo o assistente
+    para além dos computadores.
 
     ### 📺 JARVIS NA TELEVISÃO
 
@@ -552,7 +472,7 @@ with st.expander("🚀 CONHEÇA O JARVIS ORIGINAL"):
 
     ---
 
-    ## HISTÓRIA DO PROJETO
+    # HISTÓRIA DO PROJETO
 
     O desenvolvimento do JARVIS começou há aproximadamente
     dois meses.
@@ -564,15 +484,17 @@ with st.expander("🚀 CONHEÇA O JARVIS ORIGINAL"):
     Atualmente, ele trabalha nas versões para computadores
     e celulares e também aprimora a integração com a televisão.
 
-    ## LANÇAMENTO OFICIAL
+    ---
+
+    # LANÇAMENTO OFICIAL
 
     Ainda não existe uma data definida para o lançamento
-    da versão oficial.
+    da versão completa.
 
     O desenvolvimento pode demorar, pois depende totalmente
     de Oniwba e do tempo necessário para aperfeiçoar o projeto.
 
-    **JARVIS ORIGINAL — Desenvolvido por Oniwba.**
+    **JARVIS — Desenvolvido por Oniwba.** 🚀
     """)
 
 
@@ -584,43 +506,41 @@ with st.sidebar:
 
     st.markdown("## 🤖 JARVIS")
 
-    st.caption("Assistente de Inteligência Artificial")
+    st.caption("Painel de controle")
 
-    st.divider()
-
-    st.markdown("### SISTEMA")
-
-    api_key, modelo = obter_configuracao()
+    api_key, modelo_atual = obter_configuracao()
 
     if api_key:
-        st.success("API Groq conectada")
+        st.success("Conexão com a Groq configurada")
     else:
-        st.error("API Groq não configurada")
+        st.warning("API Key não configurada")
 
-    st.caption(f"Modelo: {modelo}")
+    st.markdown("---")
 
-    st.divider()
+    st.markdown("**Modelo de inteligência artificial**")
+    st.code(modelo_atual)
 
-    st.markdown("### IDENTIDADE")
+    st.markdown("---")
 
-    st.write("**Nome:** JARVIS")
-    st.write("**Criador:** Oniwba")
-    st.write("**Desenvolvimento:** Individual")
-    st.write("**Versão:** 1.6")
+    st.markdown("**Sobre esta versão**")
+    st.write(
+        "Esta é uma demonstração web do projeto JARVIS. "
+        "Ela permite conversar com a inteligência artificial, "
+        "mas não controla o computador ou outros dispositivos."
+    )
 
-    st.divider()
+    st.markdown("---")
 
     if st.button("🗑️ Limpar conversa", use_container_width=True):
-
         st.session_state.mensagens = []
-
         st.rerun()
 
-    st.caption("JARVIS ORIGINAL")
+    st.markdown("---")
+    st.caption("Projeto desenvolvido por Oniwba.")
 
 
 # ============================================================
-# HISTÓRICO DE CONVERSA
+# HISTÓRICO DA CONVERSA
 # ============================================================
 
 if "mensagens" not in st.session_state:
@@ -628,24 +548,46 @@ if "mensagens" not in st.session_state:
 
 
 # ============================================================
-# EXIBIR CONVERSA
+# MENSAGEM INICIAL
+# ============================================================
+
+if not st.session_state.mensagens:
+    st.markdown("""
+    <div style="
+        text-align:center;
+        color:#8bbde8;
+        padding:15px;
+        font-size:14px;
+    ">
+        Olá! Sou o JARVIS. Como posso ajudar você hoje?
+        <br>
+        <span style="color:#55718f;">
+            Digite sua mensagem abaixo para iniciar uma conversa.
+        </span>
+    </div>
+    """, unsafe_allow_html=True)
+
+
+# ============================================================
+# EXIBIR MENSAGENS
 # ============================================================
 
 for mensagem in st.session_state.mensagens:
 
-    with st.chat_message(mensagem["role"]):
+    if mensagem["role"] == "user":
+        avatar = "👤"
+    else:
+        avatar = "🤖"
 
+    with st.chat_message(mensagem["role"], avatar=avatar):
         st.markdown(mensagem["content"])
 
 
 # ============================================================
-# CAMPO DE CONVERSA
+# ENTRADA DO USUÁRIO E RESPOSTA DO JARVIS
 # ============================================================
 
-pergunta = st.chat_input(
-    "Digite sua mensagem para o JARVIS..."
-)
-
+pergunta = st.chat_input("Converse com o JARVIS...")
 
 if pergunta:
 
@@ -654,76 +596,21 @@ if pergunta:
         "content": pergunta
     })
 
-    with st.chat_message("user"):
+    with st.chat_message("user", avatar="👤"):
         st.markdown(pergunta)
 
-    with st.chat_message("assistant"):
+    with st.chat_message("assistant", avatar="🤖"):
 
-        with st.spinner("JARVIS está processando..."):
+        with st.spinner("JARVIS está processando sua solicitação..."):
 
-            try:
+            resposta = conversar(st.session_state.mensagens)
 
-                resposta = conversar(
-                    st.session_state.mensagens
-                )
+        st.markdown(resposta)
 
-                st.markdown(resposta)
-
-                st.session_state.mensagens.append({
-                    "role": "assistant",
-                    "content": resposta
-                })
-
-            except ValueError as erro:
-
-                mensagem_erro = f"Falha na comunicação: {erro}"
-
-                st.error(mensagem_erro)
-
-                st.session_state.mensagens.append({
-                    "role": "assistant",
-                    "content": mensagem_erro
-                })
-
-            except requests.exceptions.Timeout:
-
-                mensagem_erro = (
-                    "O tempo de resposta foi excedido. "
-                    "Tente novamente."
-                )
-
-                st.error(mensagem_erro)
-
-                st.session_state.mensagens.append({
-                    "role": "assistant",
-                    "content": mensagem_erro
-                })
-
-            except requests.exceptions.RequestException as erro:
-
-                mensagem_erro = (
-                    f"Erro de conexão com a Groq: {erro}"
-                )
-
-                st.error(mensagem_erro)
-
-                st.session_state.mensagens.append({
-                    "role": "assistant",
-                    "content": mensagem_erro
-                })
-
-            except Exception as erro:
-
-                mensagem_erro = (
-                    f"Falha inesperada: {erro}"
-                )
-
-                st.error(mensagem_erro)
-
-                st.session_state.mensagens.append({
-                    "role": "assistant",
-                    "content": mensagem_erro
-                })
+    st.session_state.mensagens.append({
+        "role": "assistant",
+        "content": resposta
+    })
 
 
 # ============================================================
@@ -732,10 +619,10 @@ if pergunta:
 
 st.markdown("""
 <div class="footer">
-    J.A.R.V.I.S. 1.6
-    <br>
-    JUST ARTIFICIAL REASONING AND VIRTUAL INTELLIGENCE SYSTEM
+    JARVIS — JUST ARTIFICIAL REASONING AND VIRTUAL INTELLIGENCE SYSTEM
     <br><br>
-    DESENVOLVIDO POR ONIWBA
+    Uma criação de Oniwba.
+    <br>
+    Versão de demonstração web.
 </div>
 """, unsafe_allow_html=True)
