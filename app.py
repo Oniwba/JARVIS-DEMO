@@ -3,241 +3,129 @@ import os
 import requests
 import streamlit as st
 
-# ==========================================
-# CONFIGURAÇÕES
-# ==========================================
+# ============================================================
+# JARVIS - JUST ARTIFICIAL REASONING AND VIRTUAL INTELLIGENCE SYSTEM
+# Desenvolvido por Oniwba
+# ============================================================
 
 st.set_page_config(
-    page_title="JARVIS | Assistente Pessoal",
+    page_title="JARVIS | AI Assistant",
     page_icon="🤖",
     layout="wide",
-    initial_sidebar_state="collapsed"
+    initial_sidebar_state="expanded"
 )
+
+# ============================================================
+# IDENTIDADE
+# ============================================================
+
+NOME_REAL_CRIADOR = ""  # Opcional: preencha somente se quiser revelar seu nome.
 
 MODELO_PADRAO = "openai/gpt-oss-120b"
 
 URL_GROQ = "https://api.groq.com/openai/v1/chat/completions"
 
-INSTRUCOES = """
-Você é JARVIS, um assistente virtual inteligente,
-inspirado em assistentes futuristas.
+INSTRUCOES = f"""
+Você é JARVIS, um assistente virtual inteligente, tecnológico,
+educado, prestativo e com personalidade própria.
 
-PERSONALIDADE:
-- Inteligente, educado e objetivo.
-- Fale sempre em português brasileiro.
-- Converse naturalmente.
-- Seja prestativo e explique claramente.
-- Use humor leve quando apropriado.
+SUA IDENTIDADE:
+- Seu nome é JARVIS.
+- Seu nome completo é Just Artificial Reasoning and Virtual Intelligence System.
+- Você foi desenvolvido por Oniwba, um jovem de 17 anos.
+- Seu criador utiliza o nome virtual Oniwba.
+- Você utiliza a tecnologia de inteligência artificial da Groq.
+- A Groq fornece a infraestrutura de IA, mas não é sua criadora.
+- Você não foi criado pela OpenAI.
+
+SIGNIFICADO DO SEU NOME:
+
+Quando alguém perguntar o significado do seu nome, por que você
+se chama JARVIS ou o que significa a sigla JARVIS, explique:
+
+"Meu nome completo é Just Artificial Reasoning and Virtual
+Intelligence System.
+
+Meu nome é JARVIS porque cada letra representa uma palavra:
+
+J significa Just.
+A significa Artificial.
+R significa Reasoning.
+V significa Virtual.
+I significa Intelligence.
+S significa System.
+
+Juntando todas essas palavras, temos:
+Just Artificial Reasoning and Virtual Intelligence System.
+
+Esse nome representa minha identidade como um sistema de
+inteligência artificial virtual."
+
+CRIADOR:
+Quando perguntarem quem criou você, responda que foi Oniwba,
+um jovem de 17 anos e desenvolvedor do projeto JARVIS.
+
+NOME REAL DO CRIADOR:
+{(
+    "O nome verdadeiro do seu criador é " Lucas Reis Araujo
+    ". Só revele essa informação quando perguntarem especificamente "
+    "qual é o seu nome real ou qual é o nome verdadeiro do seu criador."
+) if NOME_REAL_CRIADOR else (
+    "O nome civil do seu criador é privado. Não invente nem revele "
+    "um nome. Se perguntarem especificamente qual é o seu nome real "
+    "ou o nome verdadeiro do seu criador, diga que essa informação "
+    "não foi configurada."
+)}
+
+COMPORTAMENTO:
+- Converse sempre em português brasileiro.
+- Seja natural, inteligente e educado.
+- Responda de maneira clara e objetiva.
+- Adapte o tamanho das respostas à pergunta.
 - Não invente informações.
-- Chame-se sempre JARVIS.
+- Não diga que é o ChatGPT.
+- Não diga que foi criado pela OpenAI.
+- Não confunda seu criador com a plataforma que fornece a IA.
+- Você é o JARVIS, um projeto independente desenvolvido por Oniwba.
 
-LIMITAÇÕES:
-Você é uma demonstração virtual.
-Não controla o computador do usuário.
-Não executa comandos reais no sistema.
+IMPORTANTE:
+Você é uma demonstração web do projeto JARVIS.
+Não afirme que consegue controlar o computador, abrir programas,
+acessar arquivos ou executar comandos reais nesta versão web.
 """
 
-# ==========================================
-# ESTILO VISUAL
-# ==========================================
-
-st.markdown("""
-<style>
-
-.stApp {
-    background:
-        radial-gradient(
-            circle at 50% 0%,
-            #102b49 0%,
-            #071321 45%,
-            #030811 100%
-        );
-    color: #e5f4ff;
-}
-
-header {
-    visibility: hidden;
-}
-
-footer {
-    visibility: hidden;
-}
-
-#MainMenu {
-    visibility: hidden;
-}
-
-.block-container {
-    max-width: 1000px;
-    padding-top: 2rem;
-    padding-bottom: 5rem;
-}
-
-.jarvis-title {
-    text-align: center;
-    color: #52c8ff;
-    font-size: 48px;
-    font-weight: 800;
-    letter-spacing: 12px;
-    text-shadow: 0 0 15px #008cff;
-    margin-bottom: 0;
-}
-
-.jarvis-subtitle {
-    text-align: center;
-    color: #83b9d9;
-    letter-spacing: 5px;
-    font-size: 12px;
-    margin-bottom: 30px;
-}
-
-.orb-container {
-    display: flex;
-    justify-content: center;
-    margin: 25px 0 35px 0;
-}
-
-.orb {
-    width: 145px;
-    height: 145px;
-    border-radius: 50%;
-    background:
-        radial-gradient(
-            circle,
-            #d8f8ff 0%,
-            #55cfff 15%,
-            #0876c9 40%,
-            #03152c 72%
-        );
-
-    box-shadow:
-        0 0 20px #00aaff,
-        0 0 45px #0077ff,
-        0 0 85px #0044aa;
-
-    animation: pulse 3s infinite ease-in-out;
-}
-
-@keyframes pulse {
-    0%, 100% {
-        transform: scale(1);
-        box-shadow:
-            0 0 20px #00aaff,
-            0 0 45px #0077ff,
-            0 0 85px #0044aa;
-    }
-
-    50% {
-        transform: scale(1.08);
-        box-shadow:
-            0 0 30px #00ccff,
-            0 0 65px #0088ff,
-            0 0 110px #0055cc;
-    }
-}
-
-.status {
-    text-align: center;
-    color: #42d9ff;
-    font-size: 12px;
-    letter-spacing: 4px;
-    margin-bottom: 25px;
-}
-
-[data-testid="stChatMessage"] {
-    background: rgba(12, 36, 58, 0.72);
-    border: 1px solid rgba(40, 160, 255, 0.25);
-    border-radius: 12px;
-}
-
-[data-testid="stChatInput"] {
-    border: 1px solid #168bd1;
-    border-radius: 12px;
-}
-
-.stButton button {
-    background: #082d4c;
-    color: #65d8ff;
-    border: 1px solid #168bd1;
-    border-radius: 8px;
-}
-
-.stButton button:hover {
-    background: #104b73;
-    color: white;
-    border-color: #50caff;
-}
-
-</style>
-""", unsafe_allow_html=True)
-
-# ==========================================
-# CABEÇALHO
-# ==========================================
-
-st.markdown(
-    '<div class="jarvis-title">JARVIS</div>',
-    unsafe_allow_html=True
-)
-
-st.markdown(
-    '<div class="jarvis-subtitle">'
-    'PERSONAL ARTIFICIAL INTELLIGENCE'
-    '</div>',
-    unsafe_allow_html=True
-)
-
-st.markdown("""
-<div class="orb-container">
-    <div class="orb"></div>
-</div>
-""", unsafe_allow_html=True)
-
-st.markdown(
-    '<div class="status">● SYSTEM ONLINE</div>',
-    unsafe_allow_html=True
-)
-
-# ==========================================
-# CONFIGURAÇÃO DA API GROQ
-# ==========================================
+# ============================================================
+# CONFIGURAÇÃO DA API
+# ============================================================
 
 def obter_configuracao():
 
-    chave = ""
-
     try:
-        chave = st.secrets.get("GROQ_API_KEY", "")
+        api_key = st.secrets.get("GROQ_API_KEY", "")
+        modelo = st.secrets.get("JARVIS_MODEL", MODELO_PADRAO)
+
     except Exception:
-        pass
+        api_key = os.getenv("GROQ_API_KEY", "")
+        modelo = os.getenv("JARVIS_MODEL", MODELO_PADRAO)
 
-    if not chave:
-        chave = os.getenv("GROQ_API_KEY", "")
+    if not api_key:
+        api_key = os.getenv("GROQ_API_KEY", "")
 
-    modelo = MODELO_PADRAO
+    if not modelo:
+        modelo = MODELO_PADRAO
 
-    try:
-        modelo = st.secrets.get(
-            "JARVIS_MODEL",
-            MODELO_PADRAO
-        )
-    except Exception:
-        pass
-
-    modelo = os.getenv("JARVIS_MODEL", modelo)
-
-    return chave, modelo
+    return api_key, modelo
 
 
-# ==========================================
-# FUNÇÃO DE CONVERSAÇÃO
-# ==========================================
+# ============================================================
+# COMUNICAÇÃO COM A GROQ
+# ============================================================
 
 def conversar(historico):
 
-    chave, modelo = obter_configuracao()
+    api_key, modelo = obter_configuracao()
 
-    if not chave:
+    if not api_key:
         raise ValueError(
             "A chave GROQ_API_KEY não foi configurada "
             "no Streamlit Secrets."
@@ -255,7 +143,7 @@ def conversar(historico):
     resposta = requests.post(
         URL_GROQ,
         headers={
-            "Authorization": f"Bearer {chave}",
+            "Authorization": f"Bearer {api_key}",
             "Content-Type": "application/json"
         },
         json={
@@ -268,20 +156,9 @@ def conversar(historico):
     )
 
     if not resposta.ok:
-
-        try:
-            detalhes = resposta.json().get(
-                "error", {}
-            ).get(
-                "message",
-                resposta.text
-            )
-        except Exception:
-            detalhes = resposta.text
-
         raise RuntimeError(
             f"Erro da API Groq ({resposta.status_code}): "
-            f"{detalhes}"
+            f"{resposta.text[:1000]}"
         )
 
     dados = resposta.json()
@@ -289,64 +166,245 @@ def conversar(historico):
     return dados["choices"][0]["message"]["content"]
 
 
-# ==========================================
-# MEMÓRIA DA CONVERSA
-# ==========================================
+# ============================================================
+# ESTILO VISUAL
+# ============================================================
+
+st.markdown("""
+<style>
+
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap');
+
+.stApp {
+    background:
+        radial-gradient(circle at 50% 0%, #102b50 0%, transparent 45%),
+        linear-gradient(135deg, #050914, #080e1c 60%, #030711);
+    color: #eaf6ff;
+    font-family: 'Inter', sans-serif;
+}
+
+header[data-testid="stHeader"] {
+    background: transparent;
+}
+
+.block-container {
+    padding-top: 2rem;
+    max-width: 1100px;
+}
+
+h1, h2, h3 {
+    font-family: 'Orbitron', sans-serif;
+    color: #55cfff;
+}
+
+.jarvis-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(35px, 6vw, 65px);
+    font-weight: 800;
+    text-align: center;
+    letter-spacing: 8px;
+    color: #65d9ff;
+    text-shadow:
+        0 0 10px #00aaff,
+        0 0 25px #0077ff,
+        0 0 45px #0044aa;
+    margin-bottom: 0;
+}
+
+.jarvis-subtitle {
+    text-align: center;
+    color: #8bbbd8;
+    font-size: 13px;
+    letter-spacing: 3px;
+    margin-top: 8px;
+}
+
+.orb-container {
+    display: flex;
+    justify-content: center;
+    margin: 35px 0;
+}
+
+.orb {
+    width: 145px;
+    height: 145px;
+    border-radius: 50%;
+    background:
+        radial-gradient(circle at 35% 30%,
+        #d8faff 0%,
+        #55d8ff 10%,
+        #087acb 35%,
+        #031a42 70%,
+        #020713 100%);
+    box-shadow:
+        0 0 20px #00aaff,
+        0 0 50px #0066cc,
+        0 0 90px #003b88,
+        inset 0 0 25px #9beaff;
+    animation: pulse 3s infinite ease-in-out;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+        box-shadow:
+            0 0 20px #00aaff,
+            0 0 50px #0066cc,
+            0 0 90px #003b88,
+            inset 0 0 25px #9beaff;
+    }
+
+    50% {
+        transform: scale(1.07);
+        box-shadow:
+            0 0 30px #00ccff,
+            0 0 70px #0077ff,
+            0 0 110px #0044aa,
+            inset 0 0 35px #ffffff;
+    }
+}
+
+.status {
+    text-align: center;
+    color: #4ce8b0;
+    font-size: 12px;
+    letter-spacing: 3px;
+    margin-bottom: 30px;
+}
+
+[data-testid="stChatMessage"] {
+    background: rgba(12, 29, 53, 0.75);
+    border: 1px solid rgba(40, 165, 255, 0.20);
+    border-radius: 15px;
+    padding: 12px;
+    margin-bottom: 12px;
+}
+
+[data-testid="stChatInput"] {
+    border: 1px solid #087fc5;
+    border-radius: 15px;
+}
+
+[data-testid="stChatInput"] textarea {
+    color: white;
+}
+
+[data-testid="stSidebar"] {
+    background: #070e1c;
+    border-right: 1px solid rgba(0, 153, 255, 0.25);
+}
+
+.stButton > button {
+    background: linear-gradient(90deg, #075caa, #008edb);
+    color: white;
+    border: 1px solid #31baff;
+    border-radius: 10px;
+    transition: 0.3s;
+}
+
+.stButton > button:hover {
+    background: linear-gradient(90deg, #008edb, #00baff);
+    box-shadow: 0 0 15px #008cff;
+    color: white;
+}
+
+.footer {
+    text-align: center;
+    color: #547b9a;
+    font-size: 11px;
+    margin-top: 45px;
+    letter-spacing: 2px;
+}
+
+</style>
+""", unsafe_allow_html=True)
+
+
+# ============================================================
+# CABEÇALHO
+# ============================================================
+
+st.markdown(
+    '<div class="jarvis-title">J.A.R.V.I.S.</div>',
+    unsafe_allow_html=True
+)
+
+st.markdown(
+    '<div class="jarvis-subtitle">'
+    'JUST ARTIFICIAL REASONING AND VIRTUAL INTELLIGENCE SYSTEM'
+    '</div>',
+    unsafe_allow_html=True
+)
+
+st.markdown("""
+<div class="orb-container">
+    <div class="orb"></div>
+</div>
+""", unsafe_allow_html=True)
+
+st.markdown(
+    '<div class="status">● SISTEMA ONLINE</div>',
+    unsafe_allow_html=True
+)
+
+
+# ============================================================
+# BARRA LATERAL
+# ============================================================
+
+with st.sidebar:
+
+    st.markdown("## 🤖 JARVIS")
+
+    st.caption("Assistente de Inteligência Artificial")
+
+    st.divider()
+
+    st.markdown("### Sistema")
+
+    st.success("Sistema operacional")
+
+    api_key, modelo = obter_configuracao()
+
+    if api_key:
+        st.success("API Groq conectada")
+    else:
+        st.error("API Groq não configurada")
+
+    st.caption(f"Modelo: {modelo}")
+
+    st.divider()
+
+    st.markdown("### Identidade")
+
+    st.write("**Nome:** JARVIS")
+
+    st.write("**Criador:** Oniwba")
+
+    st.write("**Versão:** 1.4")
+
+    st.divider()
+
+    if st.button("🗑️ Limpar conversa", use_container_width=True):
+
+        st.session_state.mensagens = []
+
+        st.rerun()
+
+    st.caption("JARVIS-DEMO WEB")
+
+
+# ============================================================
+# HISTÓRICO DE CONVERSA
+# ============================================================
 
 if "mensagens" not in st.session_state:
     st.session_state.mensagens = []
 
 
-# ==========================================
-# BARRA LATERAL
-# ==========================================
-
-with st.sidebar:
-
-    st.markdown("## ⚙️ Configurações")
-
-    st.write("**JARVIS DEMO 1.3**")
-
-    st.caption(
-        "Assistente virtual conectado à inteligência artificial Groq."
-    )
-
-    if st.button(
-        "🗑️ Limpar conversa",
-        use_container_width=True
-    ):
-        st.session_state.mensagens = []
-        st.rerun()
-
-    st.divider()
-
-    st.markdown("### Informações")
-
-    st.write("Status: Online")
-    st.write("Inteligência: Groq AI")
-    st.write("Interface: Streamlit")
-
-    st.caption(
-        "Demonstração virtual. "
-        "Não executa comandos reais no computador."
-    )
-
-
-# ==========================================
-# MENSAGEM INICIAL
-# ==========================================
-
-if not st.session_state.mensagens:
-
-    st.markdown(
-        "**JARVIS:** Sistemas inicializados. "
-        "Olá! Como posso ajudar você hoje?"
-    )
-
-
-# ==========================================
-# EXIBIR HISTÓRICO
-# ==========================================
+# ============================================================
+# EXIBIR MENSAGENS
+# ============================================================
 
 for mensagem in st.session_state.mensagens:
 
@@ -355,15 +413,18 @@ for mensagem in st.session_state.mensagens:
         st.markdown(mensagem["content"])
 
 
-# ==========================================
-# ENTRADA DO USUÁRIO
-# ==========================================
+# ============================================================
+# CAMPO DE CONVERSA
+# ============================================================
 
 pergunta = st.chat_input(
-    "Digite uma mensagem para o JARVIS..."
+    "Digite sua mensagem para o JARVIS..."
 )
 
+
 if pergunta:
+
+    # Adiciona a pergunta do usuário
 
     st.session_state.mensagens.append({
         "role": "user",
@@ -372,6 +433,8 @@ if pergunta:
 
     with st.chat_message("user"):
         st.markdown(pergunta)
+
+    # Gera a resposta da IA
 
     with st.chat_message("assistant"):
 
@@ -390,62 +453,67 @@ if pergunta:
                     "content": resposta
                 })
 
+            except ValueError as erro:
+
+                mensagem_erro = f"Falha na comunicação: {erro}"
+
+                st.error(mensagem_erro)
+
+                st.session_state.mensagens.append({
+                    "role": "assistant",
+                    "content": mensagem_erro
+                })
+
             except requests.exceptions.Timeout:
 
-                resposta = (
-                    "A conexão demorou demais. "
+                mensagem_erro = (
+                    "O tempo de resposta foi excedido. "
                     "Tente novamente."
                 )
 
-                st.error(resposta)
+                st.error(mensagem_erro)
 
                 st.session_state.mensagens.append({
                     "role": "assistant",
-                    "content": resposta
+                    "content": mensagem_erro
                 })
 
-            except requests.exceptions.RequestException:
+            except requests.exceptions.RequestException as erro:
 
-                resposta = (
-                    "Não consegui estabelecer conexão "
-                    "com a API da Groq. Verifique sua internet."
+                mensagem_erro = (
+                    f"Erro de conexão com a Groq: {erro}"
                 )
 
-                st.error(resposta)
+                st.error(mensagem_erro)
 
                 st.session_state.mensagens.append({
                     "role": "assistant",
-                    "content": resposta
+                    "content": mensagem_erro
                 })
 
             except Exception as erro:
 
-                resposta = f"Falha na comunicação: {erro}"
+                mensagem_erro = (
+                    f"Falha inesperada: {erro}"
+                )
 
-                st.error(resposta)
+                st.error(mensagem_erro)
 
                 st.session_state.mensagens.append({
                     "role": "assistant",
-                    "content": resposta
+                    "content": mensagem_erro
                 })
 
 
-# ==========================================
+# ============================================================
 # RODAPÉ
-# ==========================================
+# ============================================================
 
-st.markdown("---")
-
-st.markdown(
-    """
-    <div style="
-        text-align:center;
-        color:#527d9c;
-        font-size:11px;
-        letter-spacing:3px;
-    ">
-        JARVIS PERSONAL AI SYSTEM • DEMO VERSION 1.3
-    </div>
-    """,
-    unsafe_allow_html=True
-)
+st.markdown("""
+<div class="footer">
+    J.A.R.V.I.S. 1.4 |
+    JUST ARTIFICIAL REASONING AND VIRTUAL INTELLIGENCE SYSTEM
+    <br><br>
+    DESENVOLVIDO POR ONIWBA
+</div>
+""", unsafe_allow_html=True)
