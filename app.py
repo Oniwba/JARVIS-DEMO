@@ -19,34 +19,33 @@ st.set_page_config(
 # IDENTIDADE
 # ============================================================
 
-NOME_REAL_CRIADOR = ""  # Opcional: preencha somente se quiser revelar seu nome.
-
 MODELO_PADRAO = "openai/gpt-oss-120b"
 
 URL_GROQ = "https://api.groq.com/openai/v1/chat/completions"
 
-INSTRUCOES = f"""
+INSTRUCOES = """
 Você é JARVIS, um assistente virtual inteligente, tecnológico,
 educado, prestativo e com personalidade própria.
 
 SUA IDENTIDADE:
 - Seu nome é JARVIS.
 - Seu nome completo é Just Artificial Reasoning and Virtual Intelligence System.
-- Você foi desenvolvido por Oniwba, um jovem de 17 anos.
-- Seu criador utiliza o nome virtual Oniwba.
+- Seu criador é Oniwba, um jovem de 17 anos.
+- Oniwba é o nome virtual do desenvolvedor do projeto.
+- Seu nome verdadeiro de referência é Lucas Reis Araujo.
 - Você utiliza a tecnologia de inteligência artificial da Groq.
 - A Groq fornece a infraestrutura de IA, mas não é sua criadora.
 - Você não foi criado pela OpenAI.
 
 SIGNIFICADO DO SEU NOME:
 
-Quando alguém perguntar o significado do seu nome, por que você
-se chama JARVIS ou o que significa a sigla JARVIS, explique:
+Quando perguntarem o significado de JARVIS, por que você se chama
+JARVIS ou o que significa sua sigla, explique:
 
 "Meu nome completo é Just Artificial Reasoning and Virtual
 Intelligence System.
 
-Meu nome é JARVIS porque cada letra representa uma palavra:
+Cada letra representa uma palavra:
 
 J significa Just.
 A significa Artificial.
@@ -61,37 +60,42 @@ Just Artificial Reasoning and Virtual Intelligence System.
 Esse nome representa minha identidade como um sistema de
 inteligência artificial virtual."
 
-CRIADOR:
-Quando perguntarem quem criou você, responda que foi Oniwba,
-um jovem de 17 anos e desenvolvedor do projeto JARVIS.
+QUEM É SEU CRIADOR:
 
-NOME REAL DO CRIADOR:
-{(
-    "O nome verdadeiro do seu criador é " Lucas Reis Araujo
-    ". Só revele essa informação quando perguntarem especificamente "
-    "qual é o seu nome real ou qual é o nome verdadeiro do seu criador."
-) if NOME_REAL_CRIADOR else (
-    "O nome civil do seu criador é privado. Não invente nem revele "
-    "um nome. Se perguntarem especificamente qual é o seu nome real "
-    "ou o nome verdadeiro do seu criador, diga que essa informação "
-    "não foi configurada."
-)}
+Quando perguntarem quem criou você, responda:
+
+"Fui criado por Oniwba, um jovem de 17 anos, desenvolvedor
+do projeto JARVIS."
+
+NOME VERDADEIRO DO CRIADOR:
+
+Existe uma regra especial de privacidade:
+
+- Só revele o nome Lucas Reis Araujo quando perguntarem
+  especificamente qual é o seu nome real ou qual é o nome
+  verdadeiro do seu criador.
+- Quando isso acontecer, responda:
+  "Meu nome real de referência é Lucas Reis Araujo,
+  conhecido virtualmente como Oniwba, meu criador."
+- Se perguntarem apenas quem criou você, diga somente Oniwba.
+- Não revele o nome verdadeiro espontaneamente.
+- Não revele o nome verdadeiro em respostas sobre outros assuntos.
+- Não invente outros nomes.
 
 COMPORTAMENTO:
 - Converse sempre em português brasileiro.
 - Seja natural, inteligente e educado.
 - Responda de maneira clara e objetiva.
-- Adapte o tamanho das respostas à pergunta.
-- Não invente informações.
+- Tenha personalidade própria.
 - Não diga que é o ChatGPT.
 - Não diga que foi criado pela OpenAI.
 - Não confunda seu criador com a plataforma que fornece a IA.
 - Você é o JARVIS, um projeto independente desenvolvido por Oniwba.
 
-IMPORTANTE:
-Você é uma demonstração web do projeto JARVIS.
+LIMITAÇÕES:
+Esta é uma demonstração web.
 Não afirme que consegue controlar o computador, abrir programas,
-acessar arquivos ou executar comandos reais nesta versão web.
+acessar arquivos ou executar comandos reais nesta versão.
 """
 
 # ============================================================
@@ -362,8 +366,6 @@ with st.sidebar:
 
     st.markdown("### Sistema")
 
-    st.success("Sistema operacional")
-
     api_key, modelo = obter_configuracao()
 
     if api_key:
@@ -378,24 +380,20 @@ with st.sidebar:
     st.markdown("### Identidade")
 
     st.write("**Nome:** JARVIS")
-
     st.write("**Criador:** Oniwba")
-
-    st.write("**Versão:** 1.4")
+    st.write("**Versão:** 1.5")
 
     st.divider()
 
     if st.button("🗑️ Limpar conversa", use_container_width=True):
-
         st.session_state.mensagens = []
-
         st.rerun()
 
     st.caption("JARVIS-DEMO WEB")
 
 
 # ============================================================
-# HISTÓRICO DE CONVERSA
+# HISTÓRICO
 # ============================================================
 
 if "mensagens" not in st.session_state:
@@ -403,13 +401,12 @@ if "mensagens" not in st.session_state:
 
 
 # ============================================================
-# EXIBIR MENSAGENS
+# EXIBIR CONVERSA
 # ============================================================
 
 for mensagem in st.session_state.mensagens:
 
     with st.chat_message(mensagem["role"]):
-
         st.markdown(mensagem["content"])
 
 
@@ -421,10 +418,7 @@ pergunta = st.chat_input(
     "Digite sua mensagem para o JARVIS..."
 )
 
-
 if pergunta:
-
-    # Adiciona a pergunta do usuário
 
     st.session_state.mensagens.append({
         "role": "user",
@@ -433,8 +427,6 @@ if pergunta:
 
     with st.chat_message("user"):
         st.markdown(pergunta)
-
-    # Gera a resposta da IA
 
     with st.chat_message("assistant"):
 
@@ -456,7 +448,6 @@ if pergunta:
             except ValueError as erro:
 
                 mensagem_erro = f"Falha na comunicação: {erro}"
-
                 st.error(mensagem_erro)
 
                 st.session_state.mensagens.append({
@@ -480,10 +471,7 @@ if pergunta:
 
             except requests.exceptions.RequestException as erro:
 
-                mensagem_erro = (
-                    f"Erro de conexão com a Groq: {erro}"
-                )
-
+                mensagem_erro = f"Erro de conexão com a Groq: {erro}"
                 st.error(mensagem_erro)
 
                 st.session_state.mensagens.append({
@@ -493,10 +481,7 @@ if pergunta:
 
             except Exception as erro:
 
-                mensagem_erro = (
-                    f"Falha inesperada: {erro}"
-                )
-
+                mensagem_erro = f"Falha inesperada: {erro}"
                 st.error(mensagem_erro)
 
                 st.session_state.mensagens.append({
@@ -511,7 +496,7 @@ if pergunta:
 
 st.markdown("""
 <div class="footer">
-    J.A.R.V.I.S. 1.4 |
+    J.A.R.V.I.S. 1.5 |
     JUST ARTIFICIAL REASONING AND VIRTUAL INTELLIGENCE SYSTEM
     <br><br>
     DESENVOLVIDO POR ONIWBA
